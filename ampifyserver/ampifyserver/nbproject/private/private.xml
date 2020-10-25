@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/constants/RequestCode.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/requestHandler/CreateGroupPlaylistHandler.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/request/GetGroupMembersRequest.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/requestHandler/GetGroupPlaylistHandler.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/requestHandler/AddGroupMemberHandler.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/authenticationHandler/Login.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/requestHandler/GetGroupMembersHandler.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/main/Mainclass.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/request/GetGroupPlaylistRequest.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/request/AddGroupMemberRequest.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/main/handleClientRequest.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/authenticationHandler/SignUp.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/requestHandler/GetGroupMusicHandler.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/request/AddSongToGroupPlaylist.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/request/GetGroupPlaylistMusicRequest.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampifyserver(1)/ampifyserver/src/requestHandler/AddSongToGroupPlaylistHandler.java</file>
+        </group>
+    </open-files>
+</project-private>
