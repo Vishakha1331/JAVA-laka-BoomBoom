@@ -1,34 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
-        <file>
-            <url>src/controllers/mainpage.java</url>
-            <bookmark id="1">
-                <name/>
-                <line>2145</line>
-                <key/>
-            </bookmark>
-        </file>
-    </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/request/GetGroupPlaylistRequest.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/main/PlayerOffline.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/main/QueueEditor.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/request/AddSongToGroupPlaylist.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/request/CreateGroupPlaylistRequest.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/request/SignUpRequest.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/request/AddSongToPlaylistRequest.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/controllers/mainpage.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/main/DownloadSong.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/request/AddGroupMemberRequest.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/request/GetPlaylistSongsRequest.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/controllers/mp3playeroffline.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/controllers/loginform.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/controllers/signupform.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/constants/RequestCode.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/request/GetGroupMembersRequest.java</file>
-            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify(1)/ampify/src/request/GetGroupPlaylistMusicRequest.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
