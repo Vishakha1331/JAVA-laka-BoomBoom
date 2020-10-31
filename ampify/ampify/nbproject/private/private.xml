@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
+        <file>
+            <url>src/controllers/mainpage.java</url>
+            <bookmark id="1">
+                <name/>
+                <line>2074</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/main/QueueEditor.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/controllers/mp3playeroffline.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/controllers/signupform.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/constants/RequestCode.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/request/LogOutRequest.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/request/SongRequest.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/controllers/logout.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/main/DownloadSong.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/controllers/mainpage.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/controllers/mp3logo.PNG</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/controllers/loginform.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/main/MainClass.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/main/tryhttp.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/main/PlayerOffline.java</file>
+        </group>
     </open-files>
 </project-private>
