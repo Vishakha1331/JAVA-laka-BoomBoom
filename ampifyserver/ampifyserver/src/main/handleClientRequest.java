@@ -256,14 +256,14 @@ public class handleClientRequest implements Runnable{
             //======================================
             
             
-            else if(request.getRequestCode().equals(RequestCode.GET_SONG)){
-                SongHandler songHandler = new SongHandler((SongRequest) request);
-                Response response = songHandler.getResponse();
-                try{
-                    oos.writeObject(response);
-                    oos.flush();
-                } catch(IOException e) {}
-            }
+//            else if(request.getRequestCode().equals(RequestCode.GET_SONG)){
+//                SongHandler songHandler = new SongHandler((SongRequest) request);
+//                Response response = songHandler.getResponse();
+//                try{
+//                    oos.writeObject(response);
+//                    oos.flush();
+//                } catch(IOException e) {}
+//            }
             //==================================================
             //
             else if(request.getRequestCode().equals(RequestCode.SHARE_PLAYLIST_REQUEST)){
@@ -366,7 +366,10 @@ public class handleClientRequest implements Runnable{
                 } catch(IOException e) {}
             }
             //===================================================
-            
+            else if (request.getRequestCode().equals(RequestCode.GET_SONG)) {
+                SongHandler songHandler =new SongHandler((SongRequest)request);
+                songHandler.getResponse();
+            }
             //return object is null and code is successful after entering given song into given playlist
             //return code is already exists if song is already in that playlist
             else if(request.getRequestCode().equals(RequestCode.ADD_SONG_TO_PLAYLIST)){

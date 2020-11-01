@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 public class SongRequest extends Request implements Serializable{
     private String song;
+    private String username;
+    
     
     public void setSong(String song){
         this.song = song;
@@ -12,6 +14,13 @@ public class SongRequest extends Request implements Serializable{
     
     public String getSong(){
         return song;
+    }
+    
+    public void setUserName(String username ){
+        this.username=username;
+    }
+    public String getUserName(){
+        return username;
     }
     
     @Override

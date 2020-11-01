@@ -2,6 +2,7 @@ package statusHandler;
 
 import constants.ResponseCode;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import request.Response;
 import request.SetStatusRequest;
@@ -19,8 +20,8 @@ public class SetUserStatusHandler {
                 try{
                     PreparedStatement pdt = DBConnection.connectDB().prepareStatement(query);
                     pdt.setString(1, SetUserStatusHandler.this.setStatusRequest.getUserName());
-                    
-                    if(pdt.executeUpdate()>0){
+                    ResultSet rs =pdt.executeQuery();
+                    if(rs.next()){
                         query= "UPDATE onlineusers SET status=? WHERE username=?";
                         pdt = DBConnection.connectDB().prepareStatement(query);
                         pdt.setString(1, String.valueOf((SetUserStatusHandler.this.setStatusRequest.getStatusCode())));

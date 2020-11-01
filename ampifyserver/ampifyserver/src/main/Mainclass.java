@@ -32,14 +32,27 @@ public class Mainclass {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
-        while(true){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
             try{
                 socket = serversocket.accept();
                 Thread t = new Thread(new handleClientRequest(socket));
                 t.start();
                 System.out.println("Client connected");
-                new Thread(new Runnable() {
+                
+                
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+                
+            }
+        }).start();
+        
+        
+        new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -56,14 +69,7 @@ public class Mainclass {
                         
                     }
                 }).start();
-                downloadSocket=downloadServerSocket.accept();
-                Thread t1=new Thread(new DownloadHandler(downloadSocket));
-                t1.start();
-                System.out.println("Download socket connected....");
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-        }
+                
     }
     
 }
