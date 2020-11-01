@@ -415,7 +415,7 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                           <Component id="playdownloadb" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
@@ -434,7 +434,7 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="playdownloadb">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="PLAY DOWNLOAD "/>
+                    <Property name="text" type="java.lang.String" value="PLAYER"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -566,7 +566,7 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="playallbutton">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="PLAY ALL"/>
+                    <Property name="text" type="java.lang.String" value="ADD ALL"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="playallbuttonActionPerformed"/>
@@ -1215,7 +1215,7 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="addplaylisttoqueue">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="PLAY"/>
+                    <Property name="text" type="java.lang.String" value="ADD TO QUEUE"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addplaylisttoqueueActionPerformed"/>

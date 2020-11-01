@@ -449,14 +449,14 @@ public mp3playeroffline mpp;
             }
         });
 
-        playdownloadb.setText("PLAY DOWNLOAD ");
+        playdownloadb.setText("PLAYER");
 
         javax.swing.GroupLayout playdownlaodsbLayout = new javax.swing.GroupLayout(playdownlaodsb);
         playdownlaodsb.setLayout(playdownlaodsbLayout);
         playdownlaodsbLayout.setHorizontalGroup(
             playdownlaodsbLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(playdownlaodsbLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(33, 33, 33)
                 .addComponent(playdownloadb)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -538,7 +538,7 @@ public mp3playeroffline mpp;
             }
         });
 
-        playallbutton.setText("PLAY ALL");
+        playallbutton.setText("ADD ALL");
         playallbutton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 playallbuttonActionPerformed(evt);
@@ -829,7 +829,7 @@ public mp3playeroffline mpp;
 
         jLabel18.setText("USER NAME:");
 
-        addplaylisttoqueue.setText("PLAY");
+        addplaylisttoqueue.setText("ADD TO QUEUE");
         addplaylisttoqueue.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addplaylisttoqueueActionPerformed(evt);
@@ -2894,6 +2894,7 @@ public mp3playeroffline mpp;
         mpp.close();
         mpp.dispose();
         this.dispose();
+        System.exit(0);
         
     }//GEN-LAST:event_logouthojaega
     
