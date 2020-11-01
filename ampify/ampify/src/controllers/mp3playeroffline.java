@@ -59,6 +59,11 @@ import java.awt.Button;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import javafx.scene.media.AudioEqualizer;
  
@@ -81,6 +86,7 @@ public class mp3playeroffline extends JFrame {
     private boolean isPaused = false;
     private boolean  isshuffle=false;
     private static ChangeListener seekListener;
+    private static ChangeListener add;
     //private ArrayList<String> songarray = new ArrayList<>();
     private int playAllQueueCounter=0;
     private int songArraySize;
@@ -92,8 +98,11 @@ public class mp3playeroffline extends JFrame {
     private String nowplayingsong;
     BufferedImage bufferedImage;
     JLabel jlabel;
-    
-
+    BufferedReader reader = null;
+    ArrayList<String> lyrictext = new ArrayList<String>();
+    ArrayList<ArrayList<Integer>> timerange = new ArrayList<>();
+    ArrayList<String> tempArrayList = new ArrayList<String>();
+    boolean set=false;
     
     public mp3playeroffline() {
         
@@ -123,7 +132,10 @@ public class mp3playeroffline extends JFrame {
     }
     //class which will play music in online mode(basic-3)
     private void mp3playeronline(int i){
+        
+        set=false;
        nowplayingsong=queueEditor.getNowplayinglist().get(i);
+       System.out.println("========================"+nowplayingsong+"222222222222222222222222222222");
         SongRequest songRequest =new SongRequest();
         songRequest.setSong(nowplayingsong);
         songRequest.setUserName(MainClass.user.getUserName());
@@ -135,6 +147,23 @@ public class mp3playeroffline extends JFrame {
         } catch (IOException ex) {
             Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
         }
+        ///READING SUBTITLES  =====================================
+        
+//        new Thread(new Runnable() {
+//           @Override
+//           public void run() {
+//               //DownloadSong dss =new DownloadSong(queueEditor.getNowplayinglist().get(i));
+//               
+//           }
+//       }).start();
+//        try {
+//            Thread.sleep(500);
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+         
+        
+        
        // to play mp4,already in temp folder
        if(  new File("C:\\Users\\rishi\\Documents\\NetBeansProjects\\ampify\\ampify\\temp\\"+queueEditor.getNowplayinglist().get(i)+".mp4").exists()){
             System.out.println("i am mp4 online");
@@ -146,6 +175,49 @@ public class mp3playeroffline extends JFrame {
             videopanel.setLayout(new BorderLayout());
             videopanel.add(jfxPanel,BorderLayout.CENTER);
             Platform.setImplicitExit(false);
+            
+            //================================================
+        if(new File("C:\\Users\\rishi\\Documents\\NetBeansProjects\\ampify\\ampify\\temp\\"+queueEditor.getNowplayinglist().get(i)+".srt").exists()){
+        File srtFile = new File("C:\\Users\\rishi\\Documents\\NetBeansProjects\\ampify\\ampify\\temp\\"+queueEditor.getNowplayinglist().get(i)+".srt");
+            try {
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(srtFile), "UTF-8"));
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        int ii = 0, value1,value2=0;
+        String temp, line = null;    
+        String[] split, converter = null;
+        
+            try {
+                while((line = reader.readLine())!=null){
+                    temp="";
+                    split = null;
+                    tempArrayList.clear();
+                    
+                    split = reader.readLine().split(" --> ");
+                    converter = split[0].split(":");
+                    value1 = Integer.valueOf(converter[0])*3600+Integer.valueOf(converter[1])*60 + Integer.valueOf(converter[2].split(",")[0]);
+                    converter = split[1].split(":");
+                    value2  = Integer.valueOf(converter[0])*3600+Integer.valueOf(converter[1])*60 + Integer.valueOf(converter[2].split(",")[0]);
+                    
+                    timerange.add(ii, new ArrayList<>());
+                    timerange.get(ii).add(0, value1);
+                    timerange.get(ii).add(1, value2);
+                    
+                    while(!(line = reader.readLine()).equals("")){
+                        temp += line +" "; }
+                    
+                    lyrictext.add(ii, temp);
+                    ii++;
+                }   } catch (IOException ex) {
+                Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        //=================================
+        
+            
             Platform.runLater(new Runnable() {
             // thread to run the music,(advanced-11)
             @Override
@@ -167,6 +239,37 @@ public class mp3playeroffline extends JFrame {
             
             mediaPlayer.setOnReady(() -> {
                 setequaliseronplay();
+                
+                //==============================
+                mediaPlayer.currentTimeProperty().addListener(l->{
+                            if(mediaPlayer!=null){
+                Duration currentTime = mediaPlayer.getCurrentTime();
+                 int mediavalue = (int) currentTime.toSeconds();
+                 int lyricvalue1, lyricvalue2, j =0, flag=0; 
+
+                 for(j=0; j<timerange.size();j++){
+                               lyricvalue1 = timerange.get(j).get(0);
+                                lyricvalue2 = timerange.get(j).get(1);
+
+                                if(lyricvalue1<= mediavalue && mediavalue<=lyricvalue2){
+                                    flag=1;
+                                    break;
+                                }
+                        }
+
+                 if(flag==1)
+                        subtitledisplaybox.setText(lyrictext.get(j));
+                 else
+                        subtitledisplaybox.setText("");
+                 
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    
+                }
+                            }
+            });
+                //==============================
              System.out.println((int) media.getDuration().toSeconds());
              seekbar.setMaximum((int) media.getDuration().toSeconds());
              mediaPlayer.currentTimeProperty().addListener(l-> {
@@ -178,13 +281,18 @@ public class mp3playeroffline extends JFrame {
                  seekbar.setValue(value);
                  seekbar.addChangeListener(seekListener);
                  
-         
+         if(set==false){
         mediaPlayer.setOnEndOfMedia(() -> {
-               
+              
             if(null != isLooping)switch (isLooping) {
                 
                 case "LOOP_OFF":
                     mediaPlayer.dispose();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     seekbar.removeChangeListener(seekListener);
                     seekbar.setValue(0);
                     
@@ -201,6 +309,11 @@ public class mp3playeroffline extends JFrame {
                     
                 case "LOOP_ALL":
                     mediaPlayer.dispose();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     seekbar.removeChangeListener(seekListener);
                     seekbar.setValue(0);
                     
@@ -212,7 +325,7 @@ public class mp3playeroffline extends JFrame {
                     break;
             }
             
-        });
+        });}
              });});
             }
         });
@@ -225,6 +338,50 @@ public class mp3playeroffline extends JFrame {
            media = new Media(new File("C:\\Users\\rishi\\Documents\\NetBeansProjects\\ampify\\ampify\\temp\\"+queueEditor.getNowplayinglist().get(i)+".mp3").toURI().toString());
            
            System.out.println("i am mp3");
+           //================================================
+        if(new File("C:\\Users\\rishi\\Documents\\NetBeansProjects\\ampify\\ampify\\temp\\"+queueEditor.getNowplayinglist().get(i)+".srt").exists()){
+        File srtFile = new File("C:\\Users\\rishi\\Documents\\NetBeansProjects\\ampify\\ampify\\temp\\"+queueEditor.getNowplayinglist().get(i)+".srt");
+            try {
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(srtFile), "UTF-8"));
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        int ii = 0, value1,value2=0;
+        String temp, line = null;    
+        String[] split, converter = null;
+        
+            try {
+                while((line = reader.readLine())!=null){
+                    temp="";
+                    split = null;
+                    tempArrayList.clear();
+                    
+                    split = reader.readLine().split(" --> ");
+                    converter = split[0].split(":");
+                    value1 = Integer.valueOf(converter[0])*3600+Integer.valueOf(converter[1])*60 + Integer.valueOf(converter[2].split(",")[0]);
+                    converter = split[1].split(":");
+                    value2  = Integer.valueOf(converter[0])*3600+Integer.valueOf(converter[1])*60 + Integer.valueOf(converter[2].split(",")[0]);
+                    
+                    timerange.add(ii, new ArrayList<>());
+                    timerange.get(ii).add(0, value1);
+                    timerange.get(ii).add(1, value2);
+                    if(reader!=null){
+                    while(!(line = reader.readLine()).equals("")){
+                        temp += line +" "; }
+                    }
+                    
+                    lyrictext.add(ii, temp);
+                    ii++;
+                }   } catch (IOException ex) {
+                Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        //=================================
+        
+           
+           
            try {
                //bufferedImage=(BufferedImage) ImageIO.read(new File("./mp3logo.PNG")).getScaledInstance(videopanel.getWidth(),videopanel.getHeight(),Image.SCALE_SMOOTH);
                ImageIcon imageIcon =new ImageIcon(ImageIO.read(new File("C:\\Users\\rishi\\Documents\\NetBeansProjects\\ampify\\ampify\\src\\controllers\\mp3logo.PNG")).getScaledInstance(videopanel.getWidth(),videopanel.getHeight(),Image.SCALE_SMOOTH));
@@ -248,6 +405,36 @@ public class mp3playeroffline extends JFrame {
         
         mediaPlayer.setOnReady(() -> {
             setequaliseronplay();
+            //==============================
+                mediaPlayer.currentTimeProperty().addListener(l->{
+                            if(mediaPlayer!=null){
+                Duration currentTime = mediaPlayer.getCurrentTime();
+                 int mediavalue = (int) currentTime.toSeconds();
+                 int lyricvalue1, lyricvalue2, j =0, flag=0; 
+
+                 for(j=0; j<timerange.size();j++){
+                               lyricvalue1 = timerange.get(j).get(0);
+                                lyricvalue2 = timerange.get(j).get(1);
+
+                                if(lyricvalue1<= mediavalue && mediavalue<=lyricvalue2){
+                                    flag=1;
+                                    break;
+                                }
+                        }
+
+                 if(flag==1)
+                        subtitledisplaybox.setText(lyrictext.get(j));
+                 else
+                        subtitledisplaybox.setText("");
+                 
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    
+                }
+                            }
+            });
+                //==============================
              System.out.println((int) media.getDuration().toSeconds());
              seekbar.setMaximum((int) media.getDuration().toSeconds());
              mediaPlayer.currentTimeProperty().addListener(l-> {
@@ -259,13 +446,18 @@ public class mp3playeroffline extends JFrame {
                  seekbar.setValue(value);
                  seekbar.addChangeListener(seekListener);
                  
-                 
+                 if(set==false){
         mediaPlayer.setOnEndOfMedia(() -> {
                 System.out.println("end of media");
             if(null != isLooping)switch (isLooping) {
                 
                 case "LOOP_OFF":
                     mediaPlayer.dispose();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     seekbar.removeChangeListener(seekListener);
                     seekbar.setValue(0);
                     
@@ -280,6 +472,11 @@ public class mp3playeroffline extends JFrame {
                     
                 case "LOOP_ALL":
                     mediaPlayer.dispose();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     seekbar.removeChangeListener(seekListener);
                     seekbar.setValue(0);
                     
@@ -291,7 +488,7 @@ public class mp3playeroffline extends JFrame {
                     break;
             }
             
-        });
+        });}
              });});
        }
        
@@ -324,6 +521,48 @@ public class mp3playeroffline extends JFrame {
            
            
            System.out.println("i am mp3 online");
+           
+           //================================================
+        if(new File("C:\\Users\\rishi\\Documents\\NetBeansProjects\\ampify\\ampify\\temp\\"+queueEditor.getNowplayinglist().get(i)+".srt").exists()){
+        File srtFile = new File("C:\\Users\\rishi\\Documents\\NetBeansProjects\\ampify\\ampify\\temp\\"+queueEditor.getNowplayinglist().get(i)+".srt");
+            try {
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(srtFile), "UTF-8"));
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        int ii = 0, value1,value2=0;
+        String temp, line = null;    
+        String[] split, converter = null;
+        
+            try {
+                while((line = reader.readLine())!=null){
+                    temp="";
+                    split = null;
+                    tempArrayList.clear();
+                    
+                    split = reader.readLine().split(" --> ");
+                    converter = split[0].split(":");
+                    value1 = Integer.valueOf(converter[0])*3600+Integer.valueOf(converter[1])*60 + Integer.valueOf(converter[2].split(",")[0]);
+                    converter = split[1].split(":");
+                    value2  = Integer.valueOf(converter[0])*3600+Integer.valueOf(converter[1])*60 + Integer.valueOf(converter[2].split(",")[0]);
+                    
+                    timerange.add(ii, new ArrayList<>());
+                    timerange.get(ii).add(0, value1);
+                    timerange.get(ii).add(1, value2);
+                    if(reader!=null){
+                    while(!(line = reader.readLine()).equals("")){
+                        temp += line +" "; }}
+                    
+                    lyrictext.add(ii, temp);
+                    ii++;
+                }   } catch (IOException ex) {
+                Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        //=================================
+        
            try {
                //bufferedImage=(BufferedImage) ImageIO.read(new File("./mp3logo.PNG")).getScaledInstance(videopanel.getWidth(),videopanel.getHeight(),Image.SCALE_SMOOTH);
                ImageIcon imageIcon =new ImageIcon(ImageIO.read(new File("C:\\Users\\rishi\\Documents\\NetBeansProjects\\ampify\\ampify\\src\\controllers\\mp3logo.PNG")).getScaledInstance(videopanel.getWidth(),videopanel.getHeight(),Image.SCALE_SMOOTH));
@@ -346,6 +585,43 @@ public class mp3playeroffline extends JFrame {
         
         mediaPlayer.setOnReady(() -> {
             setequaliseronplay();
+            //==============================
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+                //===============================    
+                mediaPlayer.currentTimeProperty().addListener(l->{
+                            if(mediaPlayer!=null){
+                Duration currentTime = mediaPlayer.getCurrentTime();
+                 int mediavalue = (int) currentTime.toSeconds();
+                 int lyricvalue1, lyricvalue2, j =0, flag=0; 
+
+                 for(j=0; j<timerange.size();j++){
+                               lyricvalue1 = timerange.get(j).get(0);
+                                lyricvalue2 = timerange.get(j).get(1);
+
+                                if(lyricvalue1<= mediavalue && mediavalue<=lyricvalue2){
+                                    flag=1;
+                                    break;
+                                }
+                        }
+
+                 if(flag==1)
+                        subtitledisplaybox.setText(lyrictext.get(j));
+                 else
+                        subtitledisplaybox.setText("");
+                 
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    
+                }
+                            }
+            });
+                //==============================
+//                }
+//            }).start();
+                
              System.out.println((int) media.getDuration().toSeconds());
              seekbar.setMaximum((int) media.getDuration().toSeconds());
              mediaPlayer.currentTimeProperty().addListener(l-> {
@@ -357,13 +633,18 @@ public class mp3playeroffline extends JFrame {
                  seekbar.setValue(value);
                  seekbar.addChangeListener(seekListener);
                  
-                 
+            if(set==false){     
         mediaPlayer.setOnEndOfMedia(() -> {
                 System.out.println("end of media");
             if(null != isLooping)switch (isLooping) {
                 
                 case "LOOP_OFF":
                     mediaPlayer.dispose();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     seekbar.removeChangeListener(seekListener);
                     seekbar.setValue(0);
                     
@@ -378,6 +659,11 @@ public class mp3playeroffline extends JFrame {
                     
                 case "LOOP_ALL":
                     mediaPlayer.dispose();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     seekbar.removeChangeListener(seekListener);
                     seekbar.setValue(0);
                     
@@ -390,6 +676,7 @@ public class mp3playeroffline extends JFrame {
             }
             
         });
+            }
              });});
        }
            //playing mp4 file in online mode
@@ -397,6 +684,47 @@ public class mp3playeroffline extends JFrame {
                
                
                System.out.println("i am mp4 online");
+               //================================================
+        if(new File("C:\\Users\\rishi\\Documents\\NetBeansProjects\\ampify\\ampify\\temp\\"+queueEditor.getNowplayinglist().get(i)+".srt").exists()){
+        File srtFile = new File("C:\\Users\\rishi\\Documents\\NetBeansProjects\\ampify\\ampify\\temp\\"+queueEditor.getNowplayinglist().get(i)+".srt");
+            try {
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(srtFile), "UTF-8"));
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        int ii = 0, value1,value2=0;
+        String temp, line = null;    
+        String[] split, converter = null;
+        
+            try {
+                while((line = reader.readLine())!=null){
+                    temp="";
+                    split = null;
+                    tempArrayList.clear();
+                    
+                    split = reader.readLine().split(" --> ");
+                    converter = split[0].split(":");
+                    value1 = Integer.valueOf(converter[0])*3600+Integer.valueOf(converter[1])*60 + Integer.valueOf(converter[2].split(",")[0]);
+                    converter = split[1].split(":");
+                    value2  = Integer.valueOf(converter[0])*3600+Integer.valueOf(converter[1])*60 + Integer.valueOf(converter[2].split(",")[0]);
+                    
+                    timerange.add(ii, new ArrayList<>());
+                    timerange.get(ii).add(0, value1);
+                    timerange.get(ii).add(1, value2);
+                    
+                    while(!(line = reader.readLine()).equals("")){
+                        temp += line +" "; }
+                    
+                    lyrictext.add(ii, temp);
+                    ii++;
+                }   } catch (IOException ex) {
+                Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        //=================================
+        
            videopanel.removeAll();
             videopanel.repaint();
             jfxPanel= new JFXPanel();
@@ -426,6 +754,45 @@ public class mp3playeroffline extends JFrame {
             
             mediaPlayer.setOnReady(() -> {
                 setequaliseronplay();
+                
+                //==============================
+//                new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+                //===============================    
+                mediaPlayer.currentTimeProperty().addListener(l->{
+                            if(mediaPlayer!=null){
+                Duration currentTime = mediaPlayer.getCurrentTime();
+                 int mediavalue = (int) currentTime.toSeconds();
+                 int lyricvalue1, lyricvalue2, j =0, flag=0; 
+
+                 for(j=0; j<timerange.size();j++){
+                               lyricvalue1 = timerange.get(j).get(0);
+                                lyricvalue2 = timerange.get(j).get(1);
+
+                                if(lyricvalue1<= mediavalue && mediavalue<=lyricvalue2){
+                                    flag=1;
+                                    break;
+                                }
+                        }
+
+                 if(flag==1)
+                        subtitledisplaybox.setText(lyrictext.get(j));
+                 else
+                        subtitledisplaybox.setText("");
+                 
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    
+                }
+                            }
+            });
+                //==============================
+//                }
+//            }).start();
+//            
+                //==============================
              System.out.println((int) media.getDuration().toSeconds());
              seekbar.setMaximum((int) media.getDuration().toSeconds());
              mediaPlayer.currentTimeProperty().addListener(l-> {
@@ -437,13 +804,18 @@ public class mp3playeroffline extends JFrame {
                  seekbar.setValue(value);
                  seekbar.addChangeListener(seekListener);
                  
-         
+         if(set==false){
         mediaPlayer.setOnEndOfMedia(() -> {
                
             if(null != isLooping)switch (isLooping) {
                 
                 case "LOOP_OFF":
                     mediaPlayer.dispose();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     seekbar.removeChangeListener(seekListener);
                     seekbar.setValue(0);
                     
@@ -460,6 +832,11 @@ public class mp3playeroffline extends JFrame {
                     
                 case "LOOP_ALL":
                     mediaPlayer.dispose();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     seekbar.removeChangeListener(seekListener);
                     seekbar.setValue(0);
                     
@@ -472,6 +849,7 @@ public class mp3playeroffline extends JFrame {
             }
             
         });
+         }
              });});
             }
         });
@@ -489,6 +867,50 @@ public class mp3playeroffline extends JFrame {
     
     //playing sog in offline mode(downloaded song play)
      private void mp3player(int i){
+         set=false;
+         ///READING SUBTITLES  =====================================
+        if(new File("C:\\Ampify_Downloaded_lyrics\\"+queueEditor.getNowplayinglist().get(i)+".srt").exists()){
+        File srtFile = new File("C:\\Ampify_Downloaded_lyrics\\"+queueEditor.getNowplayinglist().get(i)+".srt");
+            try {
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(srtFile), "UTF-8"));
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        int ii = 0, value1,value2=0;
+        String temp, line = null;    
+        String[] split, converter = null;
+        
+            try {
+                while((line = reader.readLine())!=null){
+                    temp="";
+                    split = null;
+                    tempArrayList.clear();
+                    
+                    split = reader.readLine().split(" --> ");
+                    converter = split[0].split(":");
+                    value1 = Integer.valueOf(converter[0])*3600+Integer.valueOf(converter[1])*60 + Integer.valueOf(converter[2].split(",")[0]);
+                    converter = split[1].split(":");
+                    value2  = Integer.valueOf(converter[0])*3600+Integer.valueOf(converter[1])*60 + Integer.valueOf(converter[2].split(",")[0]);
+                    
+                    timerange.add(ii, new ArrayList<>());
+                    timerange.get(ii).add(0, value1);
+                    timerange.get(ii).add(1, value2);
+                    
+                    while(!(line = reader.readLine()).equals("")){
+                        temp += line +" "; }
+                    
+                    lyrictext.add(ii, temp);
+                    ii++;
+                }   } catch (IOException ex) {
+                Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        //=================================
+         
+         
+         
        //play downloaded mp4 song
        if(  new File("C:\\Ampify_Downloaded_Songs\\"+queueEditor.getNowplayinglist().get(i)+".mp4").exists()){
             System.out.println("i am mp4");
@@ -521,6 +943,45 @@ public class mp3playeroffline extends JFrame {
             
             mediaPlayer.setOnReady(() -> {
                 setequaliseronplay();
+                
+                //==============================
+//                new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+                //===============================    
+                mediaPlayer.currentTimeProperty().addListener(l->{
+                            if(mediaPlayer!=null){
+                Duration currentTime = mediaPlayer.getCurrentTime();
+                 int mediavalue = (int) currentTime.toSeconds();
+                 int lyricvalue1, lyricvalue2, j =0, flag=0; 
+
+                 for(j=0; j<timerange.size();j++){
+                               lyricvalue1 = timerange.get(j).get(0);
+                                lyricvalue2 = timerange.get(j).get(1);
+
+                                if(lyricvalue1<= mediavalue && mediavalue<=lyricvalue2){
+                                    flag=1;
+                                    break;
+                                }
+                        }
+
+                 if(flag==1)
+                        subtitledisplaybox.setText(lyrictext.get(j));
+                 else
+                        subtitledisplaybox.setText("");
+                 
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    
+                }
+                            }
+            });
+                //==============================
+//                }
+//            }).start();
+            
+                //==============================
              System.out.println((int) media.getDuration().toSeconds());
              seekbar.setMaximum((int) media.getDuration().toSeconds());
              mediaPlayer.currentTimeProperty().addListener(l-> {
@@ -532,14 +993,21 @@ public class mp3playeroffline extends JFrame {
                  seekbar.setValue(value);
                  seekbar.addChangeListener(seekListener);
                  
-         
+         if(set==false){
         mediaPlayer.setOnEndOfMedia(() -> {
                
             if(null != isLooping)switch (isLooping) {
                 
                 case "LOOP_OFF":
+                    
                     mediaPlayer.dispose();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     seekbar.removeChangeListener(seekListener);
+                    
                     seekbar.setValue(0);
                     
                     if(playAllQueueCounter>=0 && playAllQueueCounter<queueEditor.getNowplayinglist().size()){
@@ -554,6 +1022,11 @@ public class mp3playeroffline extends JFrame {
                     
                 case "LOOP_ALL":
                     mediaPlayer.dispose();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     seekbar.removeChangeListener(seekListener);
                     seekbar.setValue(0);
                     
@@ -565,7 +1038,7 @@ public class mp3playeroffline extends JFrame {
                     break;
             }
             
-        });
+        });}
              });});
             }
         });
@@ -600,6 +1073,44 @@ public class mp3playeroffline extends JFrame {
         
         mediaPlayer.setOnReady(() -> {
             setequaliseronplay();
+            //==============================
+//                new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+                //===============================    
+                mediaPlayer.currentTimeProperty().addListener(l->{
+                  if( mediaPlayer!=null){
+                Duration currentTime = mediaPlayer.getCurrentTime();
+                 int mediavalue = (int) currentTime.toSeconds();
+                 int lyricvalue1, lyricvalue2, j =0, flag=0; 
+
+                 for(j=0; j<timerange.size();j++){
+                               lyricvalue1 = timerange.get(j).get(0);
+                                lyricvalue2 = timerange.get(j).get(1);
+
+                                if(lyricvalue1<= mediavalue && mediavalue<=lyricvalue2){
+                                    flag=1;
+                                    break;
+                                }
+                        }
+
+                 if(flag==1)
+                        subtitledisplaybox.setText(lyrictext.get(j));
+                 else
+                        subtitledisplaybox.setText("");
+                 
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    
+                }
+                  }
+            });
+                //==============================
+//                }
+//            }).start();
+            
+                //==============================
              System.out.println((int) media.getDuration().toSeconds());
              seekbar.setMaximum((int) media.getDuration().toSeconds());
              mediaPlayer.currentTimeProperty().addListener(l-> {
@@ -611,13 +1122,20 @@ public class mp3playeroffline extends JFrame {
                  seekbar.setValue(value);
                  seekbar.addChangeListener(seekListener);
                  
-                 
+            if(set==false){     
         mediaPlayer.setOnEndOfMedia(() -> {
                 System.out.println("end of media");
             if(null != isLooping)switch (isLooping) {
                 
                 case "LOOP_OFF":
                     mediaPlayer.dispose();
+                {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
                     seekbar.removeChangeListener(seekListener);
                     seekbar.setValue(0);
                     
@@ -632,6 +1150,11 @@ public class mp3playeroffline extends JFrame {
                     
                 case "LOOP_ALL":
                     mediaPlayer.dispose();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     seekbar.removeChangeListener(seekListener);
                     seekbar.setValue(0);
                     
@@ -644,6 +1167,7 @@ public class mp3playeroffline extends JFrame {
             }
             
         });
+            }
              });});
        }
        
@@ -699,6 +1223,8 @@ public class mp3playeroffline extends JFrame {
         jButton1 = new javax.swing.JButton();
         setequaliserbutton = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        subtitledisplaybox = new javax.swing.JTextArea();
         videopanel = new javax.swing.JPanel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -1000,15 +1526,25 @@ public class mp3playeroffline extends JFrame {
         jPanel4.setBackground(new java.awt.Color(51, 255, 255));
         jPanel4.setPreferredSize(new java.awt.Dimension(300, 505));
 
+        subtitledisplaybox.setColumns(20);
+        subtitledisplaybox.setRows(5);
+        jScrollPane1.setViewportView(subtitledisplaybox);
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 505, Short.MAX_VALUE)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         mainpanelmp3.add(jPanel4, java.awt.BorderLayout.LINE_END);
@@ -1074,6 +1610,11 @@ public class mp3playeroffline extends JFrame {
         
          if(isPlaying){
              mediaPlayer.dispose();
+             try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
              seekbar.removeChangeListener(seekListener);
              seekbar.setValue(0);
          }  
@@ -1175,6 +1716,11 @@ public class mp3playeroffline extends JFrame {
     private void offlinestopbuttonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_offlinestopbuttonMouseClicked
         if(isPlaying){
         mediaPlayer.dispose();
+        try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
         seekbar.removeChangeListener(seekListener);
         seekbar.setValue(0);
         isPlaying = false;
@@ -1239,11 +1785,24 @@ public class mp3playeroffline extends JFrame {
             JOptionPane.showMessageDialog(null, "NO SONGS IN QUEUE");
         }
         
-        else if(null != isLooping)switch (isLooping) {
+//=============================================================================
+            if(mediaPlayer==null){
+                JOptionPane.showMessageDialog(null,"FIRST START,THEN PLAY NEXT");
+            }
+            else{
+            mediaPlayer.seek(mediaPlayer.getTotalDuration());
+           mediaPlayer.setOnEndOfMedia(() -> {
+               
+            if(null != isLooping)switch (isLooping) {
                 
                 case "LOOP_ALL":
                     
                     mediaPlayer.dispose();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     seekbar.removeChangeListener(seekListener);
                     seekbar.setValue(0);
                     
@@ -1274,8 +1833,16 @@ public class mp3playeroffline extends JFrame {
                     
                     
                     }
-                    
+                    System.out.println("hcishcionbdciaoscdiowd");
+                    mediaPlayer.currentTimeProperty().removeListener(l->{});
                     mediaPlayer.dispose();
+                    System.out.println("na");
+                    System.out.println("nabajkbxjzkbjkzbjbjj");
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     seekbar.removeChangeListener(seekListener);
                     seekbar.setValue(0);
                     if(!online){
@@ -1289,7 +1856,13 @@ public class mp3playeroffline extends JFrame {
                         offlinepausebutton.setText("PAUSE");
                         isPaused = false;
                     break;
-        }
+            }
+            
+        });
+            }
+        //==============================================================================
+
+
         
     }//GEN-LAST:event_offlineplaynextbuttonMouseClicked
 //play previopus button(basic-3)
@@ -1298,10 +1871,28 @@ public class mp3playeroffline extends JFrame {
             JOptionPane.showMessageDialog(null, "NO SONGS IN QUEUE");
         }  
         
-        else if(null != isLooping)switch (isLooping) {
+       //=============================================================================
+        if(mediaPlayer==null){
+            JOptionPane.showMessageDialog(null,"FIRST START THEN PLAY PREVIOUS");
+        }    
+        else{
+            set=true;
+            
+            System.out.println("herereereferererererererererereere");
+       mediaPlayer.seek(mediaPlayer.getTotalDuration());
+            if(set=isPaused=true){
+           mediaPlayer.setOnEndOfMedia(() -> {
+               System.out.println("hierhierhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+            if(null != isLooping)switch (isLooping) {
                 
+
                 case "LOOP_ALL":
                     mediaPlayer.dispose();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     seekbar.removeChangeListener(seekListener);
                     seekbar.setValue(0);
                     
@@ -1325,11 +1916,12 @@ public class mp3playeroffline extends JFrame {
                         offlinepausebutton.setText("PAUSE");
                         isPaused = false;
                      break;
-                    
+                
                 default:
+                    System.out.println(playAllQueueCounter);
                     playAllQueueCounter--;
                     playAllQueueCounter--;
-                    
+                    System.out.println(playAllQueueCounter);
                     if(playAllQueueCounter<0 && isshuffle==false){
                         JOptionPane.showMessageDialog(null, "NO PREVIOUS SONGS");
                         playAllQueueCounter = 0;
@@ -1340,6 +1932,13 @@ public class mp3playeroffline extends JFrame {
                     }
                     
                     mediaPlayer.dispose();
+            {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(mp3playeroffline.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
                     seekbar.removeChangeListener(seekListener);
                     seekbar.setValue(0);
                     
@@ -1353,8 +1952,16 @@ public class mp3playeroffline extends JFrame {
                         isPlaying=true;
                     offlinepausebutton.setText("PAUSE");
                         isPaused = false;
-                    break;
+                    break;        
+
+                
+            }
+            
+        });}
         }
+
+        //==============================================================================
+
         
     }//GEN-LAST:event_offlineplaypreviousbuttonMouseClicked
 
@@ -1380,6 +1987,7 @@ public class mp3playeroffline extends JFrame {
             @Override
             public void run() {
                 if(likebox.isSelected()){
+                    
                     
             dislikebox.setSelected(false);
             SendFeedbackRequest sendFeedbackRequest =new SendFeedbackRequest();
@@ -1590,6 +2198,7 @@ public class mp3playeroffline extends JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JCheckBox likebox;
     private javax.swing.JPanel mainpanelmp3;
     private javax.swing.JLabel offlineloopbutton;
@@ -1607,6 +2216,7 @@ public class mp3playeroffline extends JFrame {
     private javax.swing.JSlider seekbar;
     private javax.swing.JButton setequaliserbutton;
     private javax.swing.JLabel songlength;
+    private javax.swing.JTextArea subtitledisplaybox;
     private javax.swing.JPanel videopanel;
     // End of variables declaration//GEN-END:variables
 

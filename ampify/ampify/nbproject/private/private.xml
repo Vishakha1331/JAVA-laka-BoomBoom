@@ -5,7 +5,7 @@
             <url>src/controllers/mainpage.java</url>
             <bookmark id="1">
                 <name/>
-                <line>2074</line>
+                <line>2103</line>
                 <key/>
             </bookmark>
         </file>
@@ -14,12 +14,15 @@
         <group>
             <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/main/QueueEditor.java</file>
             <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/controllers/mp3playeroffline.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/controllers/equaliserpresets.java</file>
             <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/controllers/signupform.java</file>
             <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/constants/RequestCode.java</file>
             <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/request/LogOutRequest.java</file>
             <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/request/SongRequest.java</file>
             <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/controllers/logout.java</file>
             <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/main/DownloadSong.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/request/DownloadSrtrequest.java</file>
+            <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/request/DownloadSongRequest.java</file>
             <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/controllers/mainpage.java</file>
             <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/controllers/mp3logo.PNG</file>
             <file>file:/C:/Users/rishi/Documents/NetBeansProjects/ampify/ampify/src/controllers/loginform.java</file>
